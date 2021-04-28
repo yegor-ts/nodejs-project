@@ -1,39 +1,17 @@
-const http = require('http');
-
 const userController = require('./modules/user/user.controller');
 
-const httpConstants = http.METHODS;
+const Router = require('./lib/Router');
 
-const routing = [
-    {
-        method: "POST",
-        pathname: "/user",
-        handler: userController.signupUser
-    },
+const router = new Router();
 
-    {
-        method: "GET",
-        pathname: "/user",
-        handler: userController.getAllUsers
-    },
+router.post('/user', userController.signupUser);
 
-    {
-        method: "GET",
-        pathname: "/user/:id",
-        handler: userController.getUser,
-    },
+router.get('/user', userController.getAllUsers);
 
-    {
-        method: "PATCH",
-        pathname: "/user/:id",
-        handler: userController.updateUser,
-    },
+router.get('/user/:id', userController.getUser);
 
-    {
-        method: "DELETE",
-        pathname: "/user/:id",
-        handler: userController.deleteUser,
-    },
-];
+router.patch('/user/:id', userController.updateUser);
 
-module.exports = routing;
+router.delete('/user/:id', userController.deleteUser);
+
+module.exports = router;

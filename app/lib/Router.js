@@ -1,32 +1,30 @@
-const routing = require('../routing');
-
 const {formatUrlPathname} = require('../util/url');
 
 
 class Router {
     constructor() {
-        this.routes = routing;
+        this.routes = [];
     }
 
-    get(url, handler) {
-        this.routes.push({url, handler, method: "GET"});
+    get(pathname, handler) {
+        this.routes.push({pathname, handler, method: "GET"});
     }
 
-    post(url, handler) {
-        this.routes.push({url, handler, method: "POST"});
+    post(pathname, handler) {
+        this.routes.push({pathname, handler, method: "POST"});
     }
 
-    patch(url, handler) {
-        this.routes.push({url, handler, method: "PATCH"});
+    patch(pathname, handler) {
+        this.routes.push({pathname, handler, method: "PATCH"});
     }
 
-    delete(url, handler) {
-        this.routes.push({url, handler, method: "DELETE"});
+    delete(pathname, handler) {
+        this.routes.push({pathname, handler, method: "DELETE"});
     }
 
     async handleRequest(req, res) {
         const {url, method} = req;
-
+        console.log()
         const {handler} = this.routes.find( route => {
             return route.pathname === formatUrlPathname(url) && route.method === method
         });

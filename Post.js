@@ -1,6 +1,6 @@
 const {v4: uuidv4} = require('uuid');
 
-const FileSystem = require('./File');
+const FileSystem = require('./app/lib/DbFileManager');
 
 const dirPath = process.env.DIR_PATH;
 

@@ -1,7 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-class FileSystem {
+class DbFileManager {
     constructor(pathToDir, ...entities) {
         this.pathToDir = pathToDir;
         this.entities = entities;
@@ -15,7 +15,7 @@ class FileSystem {
 
     checkFileExist(file) {
         const filename = file + '.json';
-        const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+        const pathToFile = path.resolve(this.pathToDir, filename);
         return fs.access(pathToFile)
             .then( () => true)
             .catch( () => false);
@@ -33,14 +33,17 @@ class FileSystem {
         const created = await this.checkFileExist(file);
         if(!created) {
             const filename = file + '.json';
-            const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+            const pathToFile = path.resolve(this.pathToDir, filename);
             return fs.writeFile(pathToFile, '[]');
         }
     }
 
     async init() {
         await this.createDir();
-        for(let file of this.entities) {
+        const allFileNames = this.entities.map( entity => {
+            return entity.getName()
+        });
+        for(let file of allFileNames) {
             await this.createFile(file);
         }
     }
@@ -48,7 +51,8 @@ class FileSystem {
     async getAll(file) {
         const created = await this.checkFileExist(file);
         const filename = file + '.json';
-        const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+        const pathToFile = path.resolve(this.pathToDir, filename);
+        console.log(pathToFile);
         if(!created) {
             console.log('File doesnt exist');
             return null;
@@ -61,7 +65,7 @@ class FileSystem {
 
     async createEntity(file, entity) {
         const filename = file + '.json';
-        const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+        const pathToFile = path.resolve(this.pathToDir, filename);
         await this.createDir()
             .catch( () => console.log('Can not create directory'));
         await this.createFile(file)
@@ -80,7 +84,7 @@ class FileSystem {
 
     async updateEntity(file, id, dataForUpdate) {
         const filename = file + '.json';
-        const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+        const pathToFile = path.resolve(this.pathToDir, filename);
         const created = await this.checkFileExist(file);
         if(!created) {
             console.log('File doesnt exist');
@@ -90,6 +94,8 @@ class FileSystem {
         const updatedEntityArray = entityArray.map( entity => {
             if(entity.id === id) {
                 return Object.assign(entity, dataForUpdate);
+            } else {
+                return entity;
             }
         });
         return fs.writeFile(pathToFile, JSON.stringify(updatedEntityArray)).then( () => updatedEntityArray);
@@ -97,7 +103,7 @@ class FileSystem {
 
     async deleteEntity(file, id) {
         const filename = file + '.json';
-        const pathToFile = path.resolve(__dirname, this.pathToDir, filename);
+        const pathToFile = path.resolve(this.pathToDir, filename);
         const created = await this.checkFileExist(file);
         if(!created) {
             console.log('File doesnt exist');
@@ -112,4 +118,4 @@ class FileSystem {
     }
 }
 
-module.exports = FileSystem;
+module.exports = DbFileManager;

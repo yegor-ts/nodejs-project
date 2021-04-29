@@ -40,7 +40,10 @@ class DbFileManager {
 
     async init() {
         await this.createDir();
-        for(let file of this.entities) {
+        const allFileNames = this.entities.map( entity => {
+            return entity.getName()
+        });
+        for(let file of allFileNames) {
             await this.createFile(file);
         }
     }
